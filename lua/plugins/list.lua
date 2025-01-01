@@ -13,59 +13,20 @@ local plugins = {
         priority = 1000,
     },
     {
+        'folke/snacks.nvim',
+        priority = 1000,
+        lazy = false,
+        config = load_config('ui.snacks'),
+    },
+    {
         'nvim-lualine/lualine.nvim',
         config = load_config('ui.lualine'),
         event = { 'BufReadPost', 'BufNewFile' },
     },
     {
-        'lukas-reineke/indent-blankline.nvim',
-        config = load_config('ui.indentline'),
-        main = 'ibl',
-        event = { 'BufReadPost', 'BufNewFile' },
-    },
-    {
-        'HiPhish/rainbow-delimiters.nvim',
-        config = load_config('ui.rainbow'),
-        event = { 'BufReadPost', 'BufNewFile' },
-    },
-    {
-        'rcarriga/nvim-notify',
-        config = load_config('ui.notify'),
-        event = 'VeryLazy',
-        cmd = 'Notifications',
-    },
-    {
         'stevearc/dressing.nvim',
         config = load_config('ui.dressing'),
         event = { 'BufReadPost', 'BufNewFile' },
-    },
-    {
-        'nvimdev/dashboard-nvim',
-        config = load_config('ui.dashboard'),
-        -- Only load when no arguments
-        event = function()
-            if vim.fn.argc() == 0 then
-                return 'VimEnter'
-            end
-        end,
-        cmd = 'Dashboard',
-    },
-    {
-        'gelguy/wilder.nvim',
-        build = function()
-            vim.cmd([[silent UpdateRemotePlugins]])
-        end,
-        config = load_config('ui.wilder'),
-        keys = { ':', '/', '?' },
-    },
-    {
-        'folke/zen-mode.nvim',
-        dependencies = {
-            'folke/twilight.nvim',
-            config = load_config('ui.twilight'),
-        },
-        config = load_config('ui.zen-mode'),
-        cmd = { 'ZenMode', 'Twilight' },
     },
 
     -- Language
@@ -104,15 +65,6 @@ local plugins = {
         event = 'InsertEnter',
     },
     {
-        'echasnovski/mini.comment',
-        version = '*',
-        dependencies = 'JoosepAlviste/nvim-ts-context-commentstring',
-        config = load_config('lang.comment'),
-        event = { 'BufReadPost', 'BufNewFile' },
-        -- enabled if anything not 0.10
-        enabled = vim.fn.has('nvim-0.10.0') == 0,
-    },
-    {
         'echasnovski/mini.surround',
         version = '*',
         config = load_config('lang.surround'),
@@ -139,17 +91,12 @@ local plugins = {
         config = load_config('lang.treesitter'),
         event = { 'BufReadPost', 'BufNewFile' },
     },
-    {
-        'ckolkey/ts-node-action',
-        dependencies = { 'nvim-treesitter' },
-        enabled = false,
-    },
     -- LSP
     {
         'neovim/nvim-lspconfig',
         dependencies = {
             'williamboman/mason-lspconfig.nvim',
-            'hrsh7th/cmp-nvim-lsp',
+            'saghen/blink.cmp',
         },
         config = load_config('lang.lspconfig'),
         event = { 'BufReadPre', 'BufNewFile' },
@@ -177,24 +124,16 @@ local plugins = {
 
     -- Completion
     {
-        'hrsh7th/nvim-cmp',
-        dependencies = {
-            'hrsh7th/cmp-buffer',
-            'hrsh7th/cmp-path',
-            'hrsh7th/cmp-cmdline',
-            'hrsh7th/cmp-nvim-lua',
-            'L3MON4D3/LuaSnip',
-            'rafamadriz/friendly-snippets',
-            'saadparwaiz1/cmp_luasnip',
-        },
-        config = load_config('lang.cmp'),
-        event = 'InsertEnter',
+        'saghen/blink.cmp',
+        dependencies = { 'rafamadriz/friendly-snippets', 'giuxtaposition/blink-cmp-copilot' },
+        version = '*',
+        config = load_config('lang.blink'),
+        opts_extend = { 'sources.default' },
+        event = { 'InsertEnter' },
     },
     {
         'zbirenbaum/copilot.lua',
-        dependencies = {
-            'zbirenbaum/copilot-cmp',
-        },
+        dependencies = { 'giuxtaposition/blink-cmp-copilot' },
         config = load_config('lang.copilot'),
         event = 'InsertEnter',
     },
@@ -341,7 +280,6 @@ local plugins = {
                 'nvim-telescope/telescope-fzf-native.nvim',
                 build = 'make',
             },
-            'nvim-telescope/telescope-symbols.nvim',
             'debugloop/telescope-undo.nvim',
         },
         config = load_config('tools.telescope'),
@@ -467,7 +405,7 @@ local plugins = {
     },
 }
 
-local ts_parsers = {
+local treesitter_parsers = {
     'bash',
     'css',
     'dart',
@@ -567,5 +505,5 @@ return {
     plugins = plugins,
     lsp_servers = lsp_servers,
     null_ls_sources = null_ls_sources,
-    ts_parsers = ts_parsers,
+    ts_parsers = treesitter_parsers,
 }
